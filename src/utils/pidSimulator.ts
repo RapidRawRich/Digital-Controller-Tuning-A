@@ -105,22 +105,27 @@ export class PIDSimulationEngine {
     }
   }
 
-  public reset(initialPv = 20, initialSp = 50) {
+  public reset(initialPv = 20, initialSp = 50, initialCo?: number) {
     this.t = 0;
     this.pv = initialPv;
     this.sp = initialSp;
     this.targetSp = initialSp;
     this.spFiltered = initialSp;
-    this.co = 0;
-    this.rawCo = 0;
-    this.integralAccum = 0;
+    const equilibriumCo = initialCo !== undefined ? initialCo : (
+      (initialPv === initialSp && this.processConfig.gain > 0)
+        ? Math.max(0, Math.min(100, (initialPv - this.processConfig.ambientTemp) / this.processConfig.gain))
+        : 0
+    );
+    this.co = equilibriumCo;
+    this.rawCo = equilibriumCo;
+    this.integralAccum = equilibriumCo;
+    this.resetFeedbackState = equilibriumCo;
     this.lastPv = initialPv;
     this.lastError = initialSp - initialPv;
     this.dFiltered = 0;
-    this.resetFeedbackState = 0;
     this.isManual = false;
-    this.manualCo = 50;
-    this.deadTimeQueue = [];
+    this.manualCo = equilibriumCo;
+    this.deadTimeQueue = [{ t: 0, val: equilibriumCo }];
   }
 
   /**

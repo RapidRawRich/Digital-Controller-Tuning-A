@@ -22,17 +22,17 @@ export const BumplessTransferLab: React.FC = () => {
   // Initialize Simulator
   useEffect(() => {
     const params: PIDParameters = {
-      kc: 2.5,
+      kc: 1.5,
       usePb: false,
-      ti: 0.8,
+      ti: 0.2, // 12 seconds - responsive, stable PI reset time
       tiUnit: 'minutes',
       useResetRate: false,
-      td: 0.1,
+      td: 0.0, // PI controller - eliminates derivative kick & phase lag
       tdUnit: 'minutes',
       derivativeFilterGain: 10,
       useDFilter: true,
       algorithm: 'standard',
-      structure: 'pid_on_error',
+      structure: 'pi_error_d_pv',
       spSoftening: 'step',
       spFilterTime: 1,
       spRampRate: 10,
@@ -47,24 +47,25 @@ export const BumplessTransferLab: React.FC = () => {
     engineRef.current = new PIDSimulationEngine(params, {
       type: 'fopdt',
       gain: 1.0,
-      tau: 6.0,
-      deadTime: 0.8,
+      tau: 5.0,
+      deadTime: 0.4,
       noiseLevel: 0.05,
       ambientTemp: 20,
       steamAvailable: true,
     });
+    engineRef.current.reset(50, 50);
 
-    // Pre-seed 60 seconds of baseline historical points so graph starts 100% full
+    // Pre-seed 60 seconds of baseline historical points in steady equilibrium (SP=50%, PV=50%, CO=30%)
     const initialData: SimulationDataPoint[] = [];
     for (let t = -60; t <= 0; t += 0.2) {
       initialData.push({
         t: Number(t.toFixed(1)),
         sp: 50,
-        pv: 20,
-        co: 0,
-        rawCo: 0,
+        pv: 50,
+        co: 30,
+        rawCo: 30,
         pTerm: 0,
-        iTerm: 0,
+        iTerm: 30,
         dTerm: 0,
       });
     }
@@ -164,7 +165,7 @@ export const BumplessTransferLab: React.FC = () => {
 
   const handleReset = () => {
     if (engineRef.current) {
-      engineRef.current.reset(20, 50);
+      engineRef.current.reset(50, 50);
       setIsManual(false);
       setManualCo(30);
       setSp(50);
@@ -173,11 +174,11 @@ export const BumplessTransferLab: React.FC = () => {
         resetData.push({
           t: Number(t.toFixed(1)),
           sp: 50,
-          pv: 20,
-          co: 0,
-          rawCo: 0,
+          pv: 50,
+          co: 30,
+          rawCo: 30,
           pTerm: 0,
-          iTerm: 0,
+          iTerm: 30,
           dTerm: 0,
         });
       }
@@ -187,16 +188,13 @@ export const BumplessTransferLab: React.FC = () => {
     }
   };
 
-  // Quick Scenario Preset 1: Smooth Bumpless Transfer Demo
+  // Quick Scenario Preset 1: Smooth Bumpless Transfer Demo (Auto <-> Man)
   const handleDemoBumpless = () => {
     if (!bumplessEnabled) {
       setBumplessEnabled(true);
       if (engineRef.current) engineRef.current.setBumplessEnabled(true);
     }
-    // Switch to manual, adjust, switch to auto
-    if (!isManual) {
-      handleToggleMode();
-    }
+    handleToggleMode();
   };
 
   // Quick Scenario Preset 2: Bumpy Transfer Demo (Demonstrating severe valve jump)
