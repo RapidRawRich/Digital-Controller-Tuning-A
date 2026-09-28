@@ -93,13 +93,13 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
       ctx.fillText(`${val}%`, padLeft - 6, y);
     });
 
-    // Time window calculation
+    // Time window calculation - Standard DCS Strip Chart Behavior
     const maxT = data.length > 0 ? data[data.length - 1].t : 0;
-    const minT = Math.max(0, maxT - timeSpan);
+    const windowEnd = Math.max(timeSpan, maxT);
+    const windowStart = windowEnd - timeSpan;
 
     const getX = (t: number) => {
-      if (maxT <= minT) return padLeft;
-      return padLeft + ((t - minT) / (maxT - minT || 1)) * plotW;
+      return padLeft + ((t - windowStart) / (windowEnd - windowStart)) * plotW;
     };
 
     // Vertical time grid lines
@@ -107,7 +107,7 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
     ctx.setLineDash([2, 4]);
     const numTimeMarks = 6;
     for (let i = 0; i <= numTimeMarks; i++) {
-      const tVal = minT + (i / numTimeMarks) * (maxT - minT);
+      const tVal = windowStart + (i / numTimeMarks) * (windowEnd - windowStart);
       const x = getX(tVal);
       ctx.beginPath();
       ctx.moveTo(x, padTop);
@@ -122,10 +122,16 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
     }
     ctx.setLineDash([]);
 
-    // Filter points in view
-    const visiblePoints = data.filter((d) => d.t >= minT - 1);
+    // Filter points in view (with a buffer so lines connect seamlessly at boundaries)
+    const visiblePoints = data.filter((d) => d.t >= windowStart - 2 && d.t <= windowEnd + 2);
 
     if (visiblePoints.length > 1) {
+      // Clip to plotting area to keep traces strictly within borders
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(padLeft, padTop, plotW, plotH);
+      ctx.clip();
+
       // 1. Raw CO (Windup Saturation indicator if above 100% or below 0%)
       const hasWindup = visiblePoints.some((d) => (d.rawCo ?? d.co) > 100 || (d.rawCo ?? d.co) < 0);
       if (hasWindup) {
@@ -228,6 +234,8 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
       });
       ctx.stroke();
       ctx.shadowBlur = 0;
+
+      ctx.restore();
     }
 
     // Outer Border

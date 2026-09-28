@@ -105,7 +105,8 @@ export const InteractivePneumaticVsDigital: React.FC = () => {
         const point = engineRef.current.step(0.1);
         setData((prev) => {
           const next = [...prev, point];
-          if (next.length > 350) next.shift();
+          const cutoff = point.t - 360;
+          while (next.length > 100 && next[0].t < cutoff) next.shift();
           return next;
         });
       }
