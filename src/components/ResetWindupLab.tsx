@@ -264,24 +264,24 @@ export const ResetWindupLab: React.FC = () => {
               </button>
             </div>
 
-            {antiWindup === 'rapid_unwind' && (
-              <div className="flex items-center justify-between pt-1 text-xs bg-slate-900/60 p-2 rounded">
-                <span className="text-slate-300">Rapid Unwind Acceleration Factor:</span>
-                <div className="flex gap-2">
-                  {[8, 16, 32].map((factor) => (
-                    <button
-                      key={factor}
-                      onClick={() => setRapidFactor(factor)}
-                      className={`px-2 py-0.5 rounded text-xs font-bold cursor-pointer ${
-                        rapidFactor === factor ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'
-                      }`}
-                    >
-                      {factor}x
-                    </button>
-                  ))}
-                </div>
+            <div className={`min-h-[2.5rem] rounded p-2 flex items-center justify-between text-xs transition-colors ${
+              antiWindup === 'rapid_unwind' ? 'bg-slate-900/60 border border-purple-500/30' : 'opacity-0 pointer-events-none'
+            }`}>
+              <span className="text-slate-300">Rapid Unwind Acceleration Factor:</span>
+              <div className="flex gap-2">
+                {[8, 16, 32].map((factor) => (
+                  <button
+                    key={factor}
+                    onClick={() => setRapidFactor(factor)}
+                    className={`w-12 justify-center py-0.5 rounded text-xs font-bold cursor-pointer shrink-0 select-none transition-colors ${
+                      rapidFactor === factor ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {factor}x
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
           </div>
         </div>
 

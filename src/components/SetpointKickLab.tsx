@@ -177,21 +177,21 @@ export const SetpointKickLab: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={() => handleStepTo(40)}
-              className="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 cursor-pointer"
+              className="w-32 justify-center py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 cursor-pointer shrink-0 select-none transition-colors"
             >
               Step SP to 40%
             </button>
             <button
               onClick={() => handleStepTo(70)}
-              className="px-3 py-1.5 rounded bg-amber-600 hover:bg-amber-500 text-slate-950 text-xs font-bold border border-amber-400 shadow cursor-pointer flex items-center gap-1"
+              className="w-52 justify-center py-1.5 rounded bg-amber-600 hover:bg-amber-500 text-slate-950 text-xs font-bold border border-amber-400 shadow cursor-pointer flex items-center gap-1 shrink-0 select-none transition-colors"
             >
-              <Zap className="w-3.5 h-3.5 fill-current" />
-              Step SP to 70% (Trigger Kick)
+              <Zap className="w-3.5 h-3.5 fill-current shrink-0" />
+              Step SP to 70% (Kick)
             </button>
           </div>
           <button
             onClick={handleDisturbance}
-            className="px-2.5 py-1 rounded bg-purple-950/60 hover:bg-purple-900/80 border border-purple-500/50 text-purple-300 text-xs font-semibold cursor-pointer"
+            className="w-full justify-center py-1 rounded bg-purple-950/60 hover:bg-purple-900/80 border border-purple-500/50 text-purple-300 text-xs font-semibold cursor-pointer shrink-0 select-none transition-colors"
           >
             Apply Load Disturbance (-25% PV)
           </button>
@@ -369,7 +369,7 @@ export const SetpointKickLab: React.FC = () => {
             isRunning={isRunning}
             onTogglePlay={() => setIsRunning(!isRunning)}
             onReset={handleReset}
-            title={`Step Response (${structure.toUpperCase()} + ${softening.toUpperCase()})`}
+            title="Setpoint Kick & Softening Dynamics"
             showSubTerms={true}
           />
 

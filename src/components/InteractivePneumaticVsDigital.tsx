@@ -4,7 +4,7 @@ import { PIDSimulationEngine } from '../utils/pidSimulator';
 import { ScopeChart } from './ScopeChart';
 import { BlockDiagramSvg } from './BlockDiagramSvg';
 import { MathFormula } from './MathFormula';
-import { Sliders, RefreshCw, Zap, HelpCircle } from 'lucide-react';
+import { Sliders, RefreshCw, Zap } from 'lucide-react';
 
 export const InteractivePneumaticVsDigital: React.FC = () => {
   // PID Settings
@@ -226,7 +226,7 @@ export const InteractivePneumaticVsDigital: React.FC = () => {
                   </span>
                   <button
                     onClick={() => setUsePb(!usePb)}
-                    className="text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-300 px-2 py-0.5 rounded border border-slate-700 cursor-pointer"
+                    className="w-32 justify-center text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-300 px-2 py-0.5 rounded border border-slate-700 cursor-pointer shrink-0 text-center select-none transition-colors"
                   >
                     Switch to {usePb ? 'Gain (Kc)' : 'PB (%)'}
                   </button>
@@ -422,31 +422,31 @@ export const InteractivePneumaticVsDigital: React.FC = () => {
 
           {/* Quick Stimulus Bar */}
           <div className="glass-panel rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <span className="font-semibold text-slate-300 flex items-center gap-1.5">
+            <span className="font-semibold text-slate-300 flex items-center gap-1.5 shrink-0">
               <Zap className="w-3.5 h-3.5 text-amber-400" /> Apply Setpoint Step:
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => handleStepChange(30)}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer"
+                className="w-24 justify-center py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer shrink-0 select-none transition-colors"
               >
                 Set to 30%
               </button>
               <button
                 onClick={() => handleStepChange(50)}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer"
+                className="w-24 justify-center py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer shrink-0 select-none transition-colors"
               >
                 Set to 50%
               </button>
               <button
                 onClick={() => handleStepChange(70)}
-                className="px-2.5 py-1 rounded bg-amber-900/40 hover:bg-amber-800/60 text-amber-300 border border-amber-600/40 font-bold cursor-pointer"
+                className="w-36 justify-center py-1 rounded bg-amber-900/40 hover:bg-amber-800/60 text-amber-300 border border-amber-600/40 font-bold cursor-pointer shrink-0 select-none transition-colors"
               >
                 Step +20% (to 70%)
               </button>
               <button
                 onClick={() => handleStepChange(90)}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer"
+                className="w-24 justify-center py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer shrink-0 select-none transition-colors"
               >
                 Set to 90%
               </button>

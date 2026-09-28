@@ -177,7 +177,7 @@ export const DerivativeFilterLab: React.FC = () => {
               </span>
               <button
                 onClick={() => setUseDFilter(!useDFilter)}
-                className={`px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer ${
+                className={`w-56 justify-center py-1 rounded text-xs font-bold transition-colors cursor-pointer shrink-0 select-none ${
                   useDFilter
                     ? 'bg-emerald-950/80 border border-emerald-500/60 text-emerald-300'
                     : 'bg-rose-950/80 border border-rose-500/60 text-rose-300'

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { SimulationDataPoint } from '../types/pid';
-import { Play, Pause, RotateCcw, Eye, EyeOff } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 
 interface ScopeChartProps {
   data: SimulationDataPoint[];
@@ -269,8 +269,8 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
       {/* Scope Header */}
       <div className="flex flex-col gap-2.5 border-b border-slate-800 pb-3">
         {/* Top Row: Title & Primary Controls (Anchored & Fixed Width) */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center justify-between gap-3 min-h-[2rem]">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <span className="relative flex h-3 w-3 shrink-0">
               {isRunning ? (
                 <>
@@ -290,51 +290,51 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={onTogglePlay}
-              className={`w-24 justify-center py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium transition cursor-pointer select-none shrink-0 ${
+              className={`w-24 justify-center py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium cursor-pointer select-none shrink-0 transition-colors ${
                 isRunning
                   ? 'bg-amber-600/30 text-amber-300 border border-amber-500/40 hover:bg-amber-600/50'
                   : 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/50'
               }`}
             >
               {isRunning ? <Pause className="w-3.5 h-3.5 shrink-0" /> : <Play className="w-3.5 h-3.5 shrink-0" />}
-              <span className="w-12 text-center">{isRunning ? 'Pause' : 'Resume'}</span>
+              <span className="w-12 text-center select-none">{isRunning ? 'Pause' : 'Resume'}</span>
             </button>
             <button
               onClick={onReset}
-              className="w-20 justify-center py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition flex items-center gap-1.5 text-xs font-medium cursor-pointer select-none shrink-0"
+              className="w-20 justify-center py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer select-none shrink-0"
             >
               <RotateCcw className="w-3.5 h-3.5 shrink-0" />
-              <span>Reset</span>
+              <span className="select-none">Reset</span>
             </button>
           </div>
         </div>
 
         {/* Telemetry Readout Bar - Dedicated row with tabular figures and fixed minimum widths */}
-        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-          <div className="bg-amber-950/40 border border-amber-500/30 px-2.5 py-1 rounded text-amber-300 flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-2 font-mono text-xs min-h-[1.75rem]">
+          <div className="bg-amber-950/40 border border-amber-500/30 px-2.5 py-1 rounded text-amber-300 flex items-center gap-1.5 shrink-0">
             <span className="text-amber-400/80 font-sans text-[11px] font-medium">SP:</span>
             <span className="font-bold text-amber-200 tabular-nums min-w-[3.6rem] text-right">
               {latestPoint.sp.toFixed(1)}%
             </span>
           </div>
-          <div className="bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 rounded text-emerald-300 flex items-center gap-1.5">
+          <div className="bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 rounded text-emerald-300 flex items-center gap-1.5 shrink-0">
             <span className="text-emerald-400/80 font-sans text-[11px] font-medium">PV:</span>
             <span className="font-bold text-emerald-200 tabular-nums min-w-[3.6rem] text-right">
               {latestPoint.pv.toFixed(1)}%
             </span>
           </div>
-          <div className="bg-cyan-950/40 border border-cyan-500/30 px-2.5 py-1 rounded text-cyan-300 flex items-center gap-1.5">
+          <div className="bg-cyan-950/40 border border-cyan-500/30 px-2.5 py-1 rounded text-cyan-300 flex items-center gap-1.5 shrink-0">
             <span className="text-cyan-400/80 font-sans text-[11px] font-medium">CO:</span>
             <span className="font-bold text-cyan-200 tabular-nums min-w-[3.6rem] text-right">
               {latestPoint.co.toFixed(1)}%
             </span>
             {(latestPoint.rawCo ?? latestPoint.co) > 100 && (
-              <span className="ml-1 text-[10px] text-rose-400 font-bold animate-pulse uppercase tracking-wider">
-                SATURATED
+              <span className="ml-1 text-[9px] text-rose-300 font-bold uppercase tracking-wider px-1 py-0.2 bg-rose-950/90 border border-rose-500/60 rounded shrink-0">
+                SAT
               </span>
             )}
           </div>
-          <div className="bg-slate-800/60 border border-slate-700 px-2.5 py-1 rounded text-slate-300 flex items-center gap-1.5">
+          <div className="bg-slate-800/60 border border-slate-700 px-2.5 py-1 rounded text-slate-300 flex items-center gap-1.5 shrink-0">
             <span className="text-slate-400 font-sans text-[11px] font-medium">Error (e):</span>
             <span
               className={`font-bold tabular-nums min-w-[4.4rem] text-right ${
@@ -353,25 +353,25 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
       </div>
 
       {/* Legend & Options */}
-      <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 pt-1">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 pt-1 min-h-[2rem]">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="flex items-center gap-1.5 shrink-0">
             <span className="w-3 h-1 bg-amber-500 rounded border-dashed"></span>
             <span className="text-amber-400 font-medium">Setpoint (SP)</span>
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-1.5 shrink-0">
             <span className="w-3 h-1 bg-emerald-500 rounded"></span>
             <span className="text-emerald-400 font-medium">Process Variable (PV)</span>
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-1.5 shrink-0">
             <span className="w-3 h-1 bg-cyan-500 rounded"></span>
             <span className="text-cyan-400 font-medium">Controller Output (CO)</span>
           </span>
           {showSubTerms && (
-            <>
+            <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={() => setShowP(!showP)}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded border text-[11px] cursor-pointer ${
+                className={`w-16 justify-center py-0.5 rounded border text-[11px] font-medium cursor-pointer shrink-0 transition-colors select-none ${
                   showP ? 'bg-purple-900/40 border-purple-500 text-purple-300' : 'bg-slate-900 border-slate-700 text-slate-500'
                 }`}
               >
@@ -379,7 +379,7 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
               </button>
               <button
                 onClick={() => setShowI(!showI)}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded border text-[11px] cursor-pointer ${
+                className={`w-16 justify-center py-0.5 rounded border text-[11px] font-medium cursor-pointer shrink-0 transition-colors select-none ${
                   showI ? 'bg-orange-900/40 border-orange-500 text-orange-300' : 'bg-slate-900 border-slate-700 text-slate-500'
                 }`}
               >
@@ -387,17 +387,17 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
               </button>
               <button
                 onClick={() => setShowD(!showD)}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded border text-[11px] cursor-pointer ${
+                className={`w-16 justify-center py-0.5 rounded border text-[11px] font-medium cursor-pointer shrink-0 transition-colors select-none ${
                   showD ? 'bg-pink-900/40 border-pink-500 text-pink-300' : 'bg-slate-900 border-slate-700 text-slate-500'
                 }`}
               >
                 D-Term
               </button>
-            </>
+            </div>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <span>Time Span:</span>
           <select
             value={timeSpan}

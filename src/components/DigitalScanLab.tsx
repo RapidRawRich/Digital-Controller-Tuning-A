@@ -276,7 +276,7 @@ export const DigitalScanLab: React.FC = () => {
             isRunning={isRunning}
             onTogglePlay={() => setIsRunning(!isRunning)}
             onReset={handleReset}
-            title={`Discrete Execution Dynamics (Scan Time: ${scanTime}s | Added Delay: ${addedDeadTime}s)`}
+            title="Discrete Execution Dynamics"
             showSubTerms={false}
           />
 

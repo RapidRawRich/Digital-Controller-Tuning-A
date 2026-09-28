@@ -71,12 +71,22 @@ export class PIDSimulationEngine {
         this.resetFeedbackState = this.manualCo;
         this.rawCo = this.manualCo;
         this.co = this.manualCo;
+        this.lastError = 0;
+        this.dFiltered = 0;
       }
     }
   }
 
   public getIsManual(): boolean {
     return this.isManual;
+  }
+
+  public getManualCo(): number {
+    return this.manualCo;
+  }
+
+  public getBumplessEnabled(): boolean {
+    return this.bumplessEnabled;
   }
 
   public setManualCo(val: number) {
@@ -162,9 +172,11 @@ export class PIDSimulationEngine {
       this.co = this.manualCo;
       this.rawCo = this.manualCo;
       if (this.bumplessEnabled) {
-        // PID output tracks CO in manual
+        // PID output tracks CO in manual (Rule 2)
         this.integralAccum = this.manualCo;
         this.resetFeedbackState = this.manualCo;
+        this.dFiltered = 0;
+        this.lastError = 0;
       }
     } else {
       // Automatic Mode: Calculate PID based on Algorithm and Structure
@@ -324,6 +336,11 @@ export class PIDSimulationEngine {
 
       // Output Limits: Clamping controller output to [coMin, coMax]
       this.co = Math.max(this.params.coMin, Math.min(this.params.coMax, this.rawCo));
+
+      if (this.bumplessEnabled) {
+        // Rule 3: Manual output setting tracks active CO in automatic
+        this.manualCo = this.co;
+      }
     }
 
     // 2. Physical Process Simulation (Heat Exchanger, FOPDT, Flow)
