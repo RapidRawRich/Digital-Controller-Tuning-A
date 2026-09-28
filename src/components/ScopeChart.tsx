@@ -267,58 +267,83 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
   return (
     <div className="glass-panel rounded-xl p-4 flex flex-col gap-3 shadow-xl">
       {/* Scope Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-3 w-3">
-            {isRunning ? (
-              <>
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-              </>
-            ) : (
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-            )}
-          </span>
-          <h3 className="font-semibold text-slate-200 text-sm tracking-wide uppercase">{title}</h3>
+      <div className="flex flex-col gap-2.5 border-b border-slate-800 pb-3">
+        {/* Top Row: Title & Primary Controls (Anchored & Fixed Width) */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="relative flex h-3 w-3 shrink-0">
+              {isRunning ? (
+                <>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </>
+              ) : (
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+              )}
+            </span>
+            <h3 className="font-semibold text-slate-200 text-xs sm:text-sm tracking-wide uppercase truncate" title={title}>
+              {title}
+            </h3>
+          </div>
+
+          {/* Controls - Fixed dimensions and shrink-0 to prevent shifting */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={onTogglePlay}
+              className={`w-24 justify-center py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium transition cursor-pointer select-none shrink-0 ${
+                isRunning
+                  ? 'bg-amber-600/30 text-amber-300 border border-amber-500/40 hover:bg-amber-600/50'
+                  : 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/50'
+              }`}
+            >
+              {isRunning ? <Pause className="w-3.5 h-3.5 shrink-0" /> : <Play className="w-3.5 h-3.5 shrink-0" />}
+              <span className="w-12 text-center">{isRunning ? 'Pause' : 'Resume'}</span>
+            </button>
+            <button
+              onClick={onReset}
+              className="w-20 justify-center py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition flex items-center gap-1.5 text-xs font-medium cursor-pointer select-none shrink-0"
+            >
+              <RotateCcw className="w-3.5 h-3.5 shrink-0" />
+              <span>Reset</span>
+            </button>
+          </div>
         </div>
 
-        {/* Live Digital Readouts */}
-        <div className="flex items-center gap-3 font-mono text-xs">
-          <div className="bg-amber-950/40 border border-amber-500/30 px-2.5 py-1 rounded text-amber-300">
-            SP: <span className="font-bold text-amber-200">{latestPoint.sp.toFixed(1)}%</span>
+        {/* Telemetry Readout Bar - Dedicated row with tabular figures and fixed minimum widths */}
+        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+          <div className="bg-amber-950/40 border border-amber-500/30 px-2.5 py-1 rounded text-amber-300 flex items-center gap-1.5">
+            <span className="text-amber-400/80 font-sans text-[11px] font-medium">SP:</span>
+            <span className="font-bold text-amber-200 tabular-nums min-w-[3.6rem] text-right">
+              {latestPoint.sp.toFixed(1)}%
+            </span>
           </div>
-          <div className="bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 rounded text-emerald-300">
-            PV: <span className="font-bold text-emerald-200">{latestPoint.pv.toFixed(1)}%</span>
+          <div className="bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 rounded text-emerald-300 flex items-center gap-1.5">
+            <span className="text-emerald-400/80 font-sans text-[11px] font-medium">PV:</span>
+            <span className="font-bold text-emerald-200 tabular-nums min-w-[3.6rem] text-right">
+              {latestPoint.pv.toFixed(1)}%
+            </span>
           </div>
-          <div className="bg-cyan-950/40 border border-cyan-500/30 px-2.5 py-1 rounded text-cyan-300">
-            CO: <span className="font-bold text-cyan-200">{latestPoint.co.toFixed(1)}%</span>
+          <div className="bg-cyan-950/40 border border-cyan-500/30 px-2.5 py-1 rounded text-cyan-300 flex items-center gap-1.5">
+            <span className="text-cyan-400/80 font-sans text-[11px] font-medium">CO:</span>
+            <span className="font-bold text-cyan-200 tabular-nums min-w-[3.6rem] text-right">
+              {latestPoint.co.toFixed(1)}%
+            </span>
             {(latestPoint.rawCo ?? latestPoint.co) > 100 && (
-              <span className="ml-1 text-[10px] text-rose-400 font-bold animate-pulse">SATURATED</span>
+              <span className="ml-1 text-[10px] text-rose-400 font-bold animate-pulse uppercase tracking-wider">
+                SATURATED
+              </span>
             )}
           </div>
-          <div className="bg-slate-800/60 border border-slate-700 px-2.5 py-1 rounded text-slate-300">
-            Error (e): <span className={`font-bold ${currentError > 0 ? 'text-emerald-400' : currentError < 0 ? 'text-amber-400' : 'text-slate-400'}`}>{currentError}%</span>
+          <div className="bg-slate-800/60 border border-slate-700 px-2.5 py-1 rounded text-slate-300 flex items-center gap-1.5">
+            <span className="text-slate-400 font-sans text-[11px] font-medium">Error (e):</span>
+            <span
+              className={`font-bold tabular-nums min-w-[4.4rem] text-right ${
+                currentError > 0 ? 'text-emerald-400' : currentError < 0 ? 'text-amber-400' : 'text-slate-400'
+              }`}
+            >
+              {(currentError > 0 ? '+' : '') + currentError.toFixed(2)}%
+            </span>
           </div>
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onTogglePlay}
-            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium transition cursor-pointer ${
-              isRunning ? 'bg-amber-600/30 text-amber-300 border border-amber-500/40 hover:bg-amber-600/50' : 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/50'
-            }`}
-          >
-            {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            {isRunning ? 'Pause' : 'Resume'}
-          </button>
-          <button
-            onClick={onReset}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition flex items-center gap-1.5 text-xs font-medium cursor-pointer"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            Reset
-          </button>
         </div>
       </div>
 
