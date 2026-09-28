@@ -93,37 +93,56 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
       ctx.fillText(`${val}%`, padLeft - 6, y);
     });
 
-    // Time window calculation - Standard DCS Strip Chart Behavior
+    // Time window calculation - True Continuous Scrolling Strip Chart
     const maxT = data.length > 0 ? data[data.length - 1].t : 0;
-    const windowEnd = Math.max(timeSpan, maxT);
-    const windowStart = windowEnd - timeSpan;
+    const windowEnd = maxT;
+    const windowStart = maxT - timeSpan;
 
     const getX = (t: number) => {
-      return padLeft + ((t - windowStart) / (windowEnd - windowStart)) * plotW;
+      return padLeft + ((t - windowStart) / timeSpan) * plotW;
     };
 
-    // Vertical time grid lines
+    // Vertical time grid lines (scrolling strip chart format)
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.setLineDash([2, 4]);
     const numTimeMarks = 6;
     for (let i = 0; i <= numTimeMarks; i++) {
-      const tVal = windowStart + (i / numTimeMarks) * (windowEnd - windowStart);
-      const x = getX(tVal);
+      const x = padLeft + (i / numTimeMarks) * plotW;
+      const tVal = windowStart + (i / numTimeMarks) * timeSpan;
+
       ctx.beginPath();
       ctx.moveTo(x, padTop);
       ctx.lineTo(x, padTop + plotH);
       ctx.stroke();
 
-      ctx.fillStyle = '#64748b';
-      ctx.font = '10px monospace';
+      ctx.fillStyle = i === numTimeMarks ? '#38bdf8' : '#64748b';
+      ctx.font = i === numTimeMarks ? 'bold 10px monospace' : '10px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      ctx.fillText(`${tVal.toFixed(0)}s`, x, padTop + plotH + 6);
+      const label = i === numTimeMarks ? 'LIVE' : `${Math.round(tVal)}s`;
+      ctx.fillText(label, x, padTop + plotH + 6);
     }
     ctx.setLineDash([]);
 
-    // Filter points in view (with a buffer so lines connect seamlessly at boundaries)
-    const visiblePoints = data.filter((d) => d.t >= windowStart - 2 && d.t <= windowEnd + 2);
+    // Filter points in view
+    const rawVisible = data.filter((d) => d.t >= windowStart - 2 && d.t <= windowEnd + 2);
+    const visiblePoints = [...rawVisible];
+
+    // Ensure edge-to-edge continuity so the line NEVER has gaps on either side
+    if (visiblePoints.length > 0) {
+      if (visiblePoints[0].t > windowStart) {
+        visiblePoints.unshift({
+          ...visiblePoints[0],
+          t: windowStart,
+        });
+      }
+      if (visiblePoints[visiblePoints.length - 1].t < windowEnd) {
+        visiblePoints.push({
+          ...visiblePoints[visiblePoints.length - 1],
+          t: windowEnd,
+        });
+      }
+    }
 
     if (visiblePoints.length > 1) {
       // Clip to plotting area to keep traces strictly within borders

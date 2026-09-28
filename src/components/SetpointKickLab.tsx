@@ -60,9 +60,19 @@ export const SetpointKickLab: React.FC = () => {
       steamAvailable: true,
     });
 
+    // Pre-seed 60 seconds of baseline historical points so graph starts 100% full
     const initialData: SimulationDataPoint[] = [];
-    for (let i = 0; i < 20; i++) {
-      initialData.push(engineRef.current.step(0.05));
+    for (let t = -60; t <= 0; t += 0.2) {
+      initialData.push({
+        t: Number(t.toFixed(1)),
+        sp: 40,
+        pv: 20,
+        co: 0,
+        rawCo: 0,
+        pTerm: 0,
+        iTerm: 0,
+        dTerm: 0,
+      });
     }
     setData(initialData);
   }, []);
@@ -128,7 +138,20 @@ export const SetpointKickLab: React.FC = () => {
   const handleReset = () => {
     if (engineRef.current) {
       engineRef.current.reset(20, 40);
-      setData([]);
+      const resetData: SimulationDataPoint[] = [];
+      for (let t = -60; t <= 0; t += 0.2) {
+        resetData.push({
+          t: Number(t.toFixed(1)),
+          sp: 40,
+          pv: 20,
+          co: 0,
+          rawCo: 0,
+          pTerm: 0,
+          iTerm: 0,
+          dTerm: 0,
+        });
+      }
+      setData(resetData);
       setKickDetected(null);
     }
   };
