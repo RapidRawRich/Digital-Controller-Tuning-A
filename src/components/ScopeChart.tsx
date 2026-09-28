@@ -328,7 +328,7 @@ export const ScopeChart: React.FC<ScopeChartProps> = ({
             <span className="font-bold text-cyan-200 tabular-nums min-w-[3.6rem] text-right">
               {latestPoint.co.toFixed(1)}%
             </span>
-            {(latestPoint.rawCo ?? latestPoint.co) > 100 && (
+            {(latestPoint.isSaturated || (latestPoint.rawCo ?? latestPoint.co) > 100 || (latestPoint.rawCo ?? latestPoint.co) < 0) && (
               <span className="ml-1 text-[9px] text-rose-300 font-bold uppercase tracking-wider px-1 py-0.2 bg-rose-950/90 border border-rose-500/60 rounded shrink-0">
                 SAT
               </span>
